@@ -5,6 +5,6 @@ points. It vibrates itself and has red text show when there is an incorrect user
 .anchor method can be found in: https://github.com/Abemarkar23/Swift-Anchors/tree/master.
 
 
-
+![alt text](https://github.com/Abemarkar23/Login-Window/blob/master/ezgif.com-gif-to-mp4.gif)
 
 
