@@ -1,5 +1,5 @@
 //
-//  Login Window.swift
+//  File.swift
 //  Q Connection
 //
 //  Created by Arjun Bemarkar on 11/1/18.
@@ -10,6 +10,10 @@ import Foundation
 import UIKit
 import AudioToolbox
 
+protocol LoginViewDelegate {
+  func loginButtonTapped(username : String, password : String)
+}
+
 class LoginCredsView: UIView {
   private let usernameField = UITextField()
   private let passwordField = UITextField()
@@ -18,9 +22,11 @@ class LoginCredsView: UIView {
   private let spacing : CGFloat = 7
   private let loginFailedLabel = UILabel()
   private let loginFailedLabelHeight : CGFloat = 10
+  var delegate : LoginViewDelegate?
   
   override init(frame: CGRect) {
     super.init(frame: frame)
+    
     backgroundColor = .white
     roundEdges(radius: 20)
     setupUsernameField()
@@ -89,6 +95,15 @@ class LoginCredsView: UIView {
     loginButton.addTarget(self, action: #selector(didTouchLoginButton), for: .touchUpInside)
   }
   
+  @objc func didTouchLoginButton() {
+    if usernameField.text == "" || passwordField.text == "" {
+      setupLoginFailedLabel()
+    }
+    else {
+      delegate!.loginButtonTapped(username: usernameField.text!, password: passwordField.text!)
+    }
+  }
+  
   func getCurrentViewController() -> UIViewController? {
     if let rootController = UIApplication.shared.keyWindow?.rootViewController {
       var currentController: UIViewController! = rootController
@@ -99,36 +114,18 @@ class LoginCredsView: UIView {
     }
     return nil
   }
-  
-  
-  func checkLogin() -> Bool {
-    // check login
-    return false
-  }
-  
-  func loginFailed() {
-    loginFailedLabel.textColor = .red
-    loginFailedLabel.text = "Incorrect username or password."
-    self.shake()
-  }
-  
-  func loginSucceded() {
-    let vc: myVC =  myVC()
-    let navController = UINavigationController(rootViewController: vc)
-    let currentController = getCurrentViewController()
-    currentController?.present(navController, animated: false, completion: nil)
-  }
-  @objc func didTouchLoginButton() {
+}
+class myVC : UIViewController {
     
-    if checkLogin(){
-      loginSucceded()
-    }
-    else {
-      loginFailed()
-    }
-  }
 }
 
-class myVC : UIViewController {
-  
+extension UIView {
+  func shake(){
+    let animation = CAKeyframeAnimation(keyPath: "transform.translation.x")
+    AudioServicesPlayAlertSound(kSystemSoundID_Vibrate)
+    animation.timingFunction = CAMediaTimingFunction(name: CAMediaTimingFunctionName.linear)
+    animation.duration = 0.6
+    animation.values = [-20.0, 20.0, -20.0, 20.0, -10.0, 10.0, -5.0, 5.0, 0.0 ]
+    layer.add(animation, forKey: "shake")
+  }
 }
